@@ -1,10 +1,11 @@
 #include<stdio.h>
 #include<Windows.h>
-#include<stdlib.h>
+//#include<stdlib.h>
 int GetScreenWidth(){//获取控制台长度
     HANDLE hConsole =GetStdHandle(STD_OUTPUT_HANDLE);
     CONSOLE_SCREEN_BUFFER_INFOEX csbi;
     csbi.cbSize=sizeof(CONSOLE_SCREEN_BUFFER_INFOEX);
+    GetConsoleScreenBufferInfoEx(hConsole,&csbi);
     const int WIDTH=csbi.srWindow.Right-csbi.srWindow.Left+1;
     return WIDTH;
 }
@@ -25,7 +26,7 @@ void moveletter(int move_Number,char Letter){//字符移动
           puts("");
     }
     printf("%c",&Letter);
-    system("CLS");
+    system("cls");
 }
 int main(){
     int move_number=1,ruffered_number=0;
@@ -33,7 +34,7 @@ int main(){
     getletter(letter);
     while(1){
         moveletter(move_number,letter);
-       // system("pause");
+        // system("pause");
         if(move_number==GetScreenWidth()||move_number==0){
             ruffered_number++;
         }
