@@ -1,32 +1,68 @@
-//待办事宜
-//1迷宫初始化 1 0赋值 完成
-//2迷宫路线生成
-//3移动控制
-//4碰壁以及成功设置
-
-#include<stdio.h>
+﻿#include<stdio.h>
 #include<math.h>
 #include<time.h>
 #include<Windows.h>
-
-//0为闭路 1为迷宫路线生成点 2为开路 3为 4为终点 5为
-
+#include<conio.h>
+//0为闭路 1为迷宫路线生成点 2为开路 3为人物 4为终点 
 //全局变量
 int mate[21][21];
+int current_Line=1,current_Column=1;
 //函数原型
-int move(char keyboard);//未完成
+void move_1(char keyboard,int current_line,int current_column);
+void move(char keyboard,int current_line,int current_column);//未完成
 void mate_intialization();
+void mate_intialization_2();
 void mate_maker_routeplan(int random_direction,int current_line,int current_column);
 void mate_maker(int current_line,int current_column);
+void print_mate_2(int line,int column);
+void print_mate();
+void gametime();
 //函数
-/*int move(char keyboard){
-    switch (keyboard){
-        case 'a' : 
+void move_1(char keyboard,int current_line,int current_column){
+    keyboard=getch();
+    move(keyboard,current_line,current_column);
+}
+void move(char keyboard,int current_line,int current_column){
+    switch(keyboard){
+        case 'a':
+            if(mate[current_line][current_column-1]==2||mate[current_line][current_column-1]==4){
+                mate[current_line][current_column]=mate[current_Line][current_column-1];
+                mate[current_Line][current_column-1]=3;
+                current_Column=current_column-1;
+            }else{
+                move_1(keyboard,current_line,current_column);
+            }
+            break;
+        case 's':
+            if(mate[current_line+1][current_column]==2||mate[current_line+1][current_column]==4){
+                mate[current_line][current_column]=mate[current_Line+1][current_column];
+                mate[current_Line+1][current_column]=3;
+                current_Line=current_line+1;
+            }else{
+                move_1(keyboard,current_line,current_column);
+            }
+            break;
+        case 'd':
+            if(mate[current_line][current_column+1]==2||mate[current_line][current_column+1]==4){
+                mate[current_line][current_column]=mate[current_Line][current_column+1];
+                mate[current_Line][current_column+1]=3;
+                current_Column=current_column+1;
+            }else{
+                move_1(keyboard,current_line,current_column);
+            }
+            break;
+        case 'w':
+            if(mate[current_line-1][current_column]==2||mate[current_line-1][current_column]==4){
+                mate[current_line][current_column]=mate[current_Line-1][current_column];
+                mate[current_Line-1][current_column]=3;
+                current_Line=current_line-1;
+            }else{
+                move_1(keyboard,current_line,current_column);
+            }
+            break;
+        default :
+            move_1(keyboard,current_line,current_column);
     }
-}*/
-int move(char keyboard)
-{
-    return 0;
 }
 void mate_intialization(){
     for(int i=0;i<21;i++){
@@ -40,14 +76,16 @@ void mate_intialization(){
     }
     mate[1][1]=2;//简单化处理：令【1】【1】为迷宫入口
 }
+void mate_intialization_2(){//生成终点
+    mate[19][19]=4;
+    mate[1][1]=3;
+}
 void mate_maker_routeplan(int random_direction,int current_line,int current_column){
-   //srand((unsigned)time(NULL));
     switch(random_direction){
         case 0://下
             if(current_line<=17){
                 if(mate[current_line+2][current_column]==1){
                     mate[current_line+2][current_column]=2,mate[current_line+1][current_column]=2;
-                   //srand((unsigned)time(NULL));
                     mate_maker(current_line+2,current_column);
                     return ;
                 }else{
@@ -61,7 +99,6 @@ void mate_maker_routeplan(int random_direction,int current_line,int current_colu
             if(current_column<=17){
                 if(mate[current_line][current_column+2]==1){
                     mate[current_line][current_column+2]=2,mate[current_line][current_column+1]=2;
-                   //srand((unsigned)time(NULL));
                     mate_maker(current_line,current_column+2);
                     return ;
                 }else{
@@ -75,7 +112,6 @@ void mate_maker_routeplan(int random_direction,int current_line,int current_colu
             if(current_line>=3){
                 if(mate[current_line-2][current_column]==1){
                     mate[current_line-2][current_column]=2,mate[current_line-1][current_column]=2;
-                   //srand((unsigned)time(NULL));
                     mate_maker(current_line-2,current_column);
                     return ;
                 }else{
@@ -89,7 +125,6 @@ void mate_maker_routeplan(int random_direction,int current_line,int current_colu
             if(current_column>=3){
                 if(mate[current_line][current_column-2]==1){
                     mate[current_line][current_column-2]=2,mate[current_line][current_column-1]=2;
-                   //srand((unsigned)time(NULL));
                     mate_maker(current_line,current_column-2);
                     return ;
                 }else{
@@ -103,43 +138,58 @@ void mate_maker_routeplan(int random_direction,int current_line,int current_colu
     }
 }
 void mate_maker(int current_line,int current_column){
-    //srand((unsigned)time(NULL));
-    //int random_direction=rand()%4;//0为下 1为右 2为上 3为上
     while(1){
-        //srand((unsigned)time(NULL));
         int random_direction=rand()%4;
         if((mate[current_line-2][current_column]==1||mate[current_line+2][current_column]==1||mate[current_line][current_column+2]==1||mate[current_line][current_column-2]==1)==0){
             return ;
         }else{
             mate_maker_routeplan(random_direction,current_line,current_column);
-            /*if(1==a){
-                switch(random_direction){
-                    case 0:current_line+=2;break;
-                    case 1:current_column+=2;break;
-                    case 2:current_line-=2;break;
-                    case 3:current_line-=2;break;
-                }
-            }*/
+        }
+    }
+}
+void print_mate_2(int line,int column){
+    switch(mate[line][column]){
+        case 0:
+            printf("\033[1;34m0\033[0m");
+            break;
+        case 2:
+            printf(" ");
+            break;
+        case 3:
+            printf("\033[1;32m3\033[0m");
+            break;
+        case 4:
+            printf("\033[1;31m4\033[0m");
+            break;
+    }
+}
+void print_mate(){
+    printf("\033[1;31m'0'is the wall\n'3'is the man\n'4'is the target locate\n\033");
+    for(int i=0;i<21;i++){
+        printf("\t");
+        for(int j=0;j<21;j++){
+            print_mate_2(i,j);
+        }
+        printf("\n");
+    }
+}
+void gametime(){
+    while(1){
+        print_mate();
+        move(getch(),current_Line,current_Column);
+        system("cls");
+        if(mate[19][19]==3){
+            MessageBox(0,TEXT("Congrutulations!"),TEXT("Gameover"),NULL);
+            break;
         }
     }
 }
 int main(){
+    
     srand((unsigned)time(NULL));
     mate_intialization();
     mate_maker(1,1);
-    for(int i=0;i<21;i++){
-        for(int j=0;j<21;j++){
-            printf("%d ",mate[i][j]);
-        }
-        printf("\n");
-    }
+    mate_intialization_2();
+    gametime();
     return 0;
 }
-/*for(int i=0;i<21;i++){
-            for(int j=0;j<21;j++){
-                printf("%d ",mate[i][j]);
-            }
-            printf("\n");
-        }
-        printf("\n");
-        system("pause");*/
