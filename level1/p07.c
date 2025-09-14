@@ -149,18 +149,10 @@ void mate_maker(int current_line,int current_column){
 }
 void print_mate_2(int line,int column){
     switch(mate[line][column]){
-        case 0:
-            printf("\033[1;34m0\033[0m");
-            break;
-        case 2:
-            printf(" ");
-            break;
-        case 3:
-            printf("\033[1;32m3\033[0m");
-            break;
-        case 4:
-            printf("\033[1;31m4\033[0m");
-            break;
+        case 0:printf("\033[1;34m0\033[0m");break;
+        case 2:printf(" ");break;
+        case 3:printf("\033[1;32m3\033[0m"); break;
+        case 4:printf("\033[1;31m4\033[0m");break;
     }
 }
 void print_mate(){
@@ -185,7 +177,6 @@ void gametime(){
     }
 }
 int main(){
-    
     srand((unsigned)time(NULL));
     mate_intialization();
     mate_maker(1,1);
