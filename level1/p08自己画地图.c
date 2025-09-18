@@ -1,7 +1,8 @@
 //0 is wall;1 is man;2 is road;3 is box;4 is target 5 is fillman 6 is the symbol of get one flag
 #include<stdio.h>
 #include<Windows.h>
-FILE *file_1,*file_2,*file_3;
+FILE *file_1,*file_2,*file_3,*file_move_number,*file_open_history;
+void hideUcrsor();
 void printMateIntoTxt();
 void getmate_1();
 void getmate_2();
@@ -9,6 +10,8 @@ void getmate_3();
 void print_mate();
 void move(char move,int current_line,int current_column,int numberOfMate);
 void gametime(int current_line,int current_column,int numberOfMate);
+void printMoveNumber();
+void getHistorical_moveNumber(char whether);
 int mate_1[11][11]={
     {0,0,0,0,0,0,0,0,0,0,5},
     {0,2,2,2,2,2,0,2,2,0,5},
@@ -51,7 +54,16 @@ int mate_3[11][11]={
 char mate[11][11];
 int current_Line,current_Column;
 int flag;
+int moveNUMBER;
+void hideCursor(){
+    HANDLE hConsole=GetStdHandle(STD_OUTPUT_HANDLE);
+    CONSOLE_CURSOR_INFO cursorinfo;
+    GetConsoleCursorInfo(hConsole,&cursorinfo);
+    cursorinfo.bVisible=FALSE;
+    SetConsoleCursorInfo(hConsole,&cursorinfo);
+}
 void printMateIntoTxt(){
+    hideCursor();
     file_1=fopen("mate_1.txt","w");
     file_2=fopen("mate_2.txt","w");
     file_3=fopen("mate_3.txt","w");
@@ -144,51 +156,52 @@ void print_mate(){
         }
         printf("\n");
     }
+    printf("You have moved %d times\n",moveNUMBER);
 }
 void move(char Move,int current_line,int current_column,int numberOfMate){
     switch(Move){
         case 'a':
             switch(mate[current_line][current_column-1]){
                 case '0'||'4'||'5'||'6': move(getch(),current_line,current_column,numberOfMate);break;
-                case '2':mate[current_line][current_column]='2',mate[current_line][current_column-1]='1';current_Column--;break;
+                case '2':mate[current_line][current_column]='2',mate[current_line][current_column-1]='1';current_Column--;moveNUMBER++;break;
                 case '3':
                     switch(mate[current_line][current_column-2]){
-                        case '2':mate[current_line][current_column]='2',mate[current_line][current_column-1]='1',mate[current_line][current_column-2]='3';current_Column--;break;
+                        case '2':mate[current_line][current_column]='2',mate[current_line][current_column-1]='1',mate[current_line][current_column-2]='3';current_Column--;moveNUMBER++;break;
                         case '0'||'5'||'6':move(getch(),current_line,current_column,numberOfMate);break;
-                        case '4':flag--;mate[current_line][current_column-1]='1',mate[current_line][current_column-2]='6',mate[current_line][current_column]='2';current_Column--;break;
+                        case '4':flag--;mate[current_line][current_column-1]='1',mate[current_line][current_column-2]='6',mate[current_line][current_column]='2';current_Column--;moveNUMBER++;break;
                     }break;
             }break;
         case 's':
             switch(mate[current_line+1][current_column]){
                 case '0'||'4'||'5'||'6': move(getch(),current_line,current_column,numberOfMate);break;
-                case '2':mate[current_line][current_column]='2',mate[current_line+1][current_column]='1';current_Line++;break;
+                case '2':mate[current_line][current_column]='2',mate[current_line+1][current_column]='1';current_Line++;moveNUMBER++;break;
                 case '3':
                     switch(mate[current_line+2][current_column]){
-                        case '2':mate[current_line][current_column]='2',mate[current_line+1][current_column]='1',mate[current_line+2][current_column]='3';current_Line++;break;
+                        case '2':mate[current_line][current_column]='2',mate[current_line+1][current_column]='1',mate[current_line+2][current_column]='3';current_Line++;moveNUMBER++;break;
                         case '0'||'5'||'6':move(getch(),current_line,current_column,numberOfMate);break;
-                        case '4':flag--;mate[current_line+1][current_column]='1',mate[current_line+2][current_column]='6',mate[current_line][current_column]='2';current_Line++;break;
+                        case '4':flag--;mate[current_line+1][current_column]='1',mate[current_line+2][current_column]='6',mate[current_line][current_column]='2';current_Line++;moveNUMBER++;break;
                     }break;
             }break;
         case 'd':
             switch(mate[current_line][current_column+1]){
                 case '0'||'4'||'5'||'6': move(getch(),current_line,current_column,numberOfMate);break;
-                case '2':mate[current_line][current_column]='2',mate[current_line][current_column+1]='1';current_Column++;break;
+                case '2':mate[current_line][current_column]='2',mate[current_line][current_column+1]='1';current_Column++;moveNUMBER++;break;
                 case '3':
                     switch(mate[current_line][current_column+2]){
-                        case '2':mate[current_line][current_column]='2',mate[current_line][current_column+1]='1',mate[current_line][current_column+2]='3';current_Column++;break;
+                        case '2':mate[current_line][current_column]='2',mate[current_line][current_column+1]='1',mate[current_line][current_column+2]='3';current_Column++;moveNUMBER++;break;
                         case '0'||'5'||'6':move(getch(),current_line,current_column,numberOfMate);break;
-                        case '4':flag--;mate[current_line][current_column+1]='1',mate[current_line][current_column+2]='6',mate[current_line][current_column]='2';current_Column++;break;
+                        case '4':flag--;mate[current_line][current_column+1]='1',mate[current_line][current_column+2]='6',mate[current_line][current_column]='2';current_Column++;moveNUMBER++;break;
                     }break;
             }break;
         case 'w':
             switch(mate[current_line-1][current_column]){
                 case '0'||'4'||'5'||'6': move(getch(),current_line,current_column,numberOfMate);break;
-                case '2':mate[current_line][current_column]='2',mate[current_line-1][current_column]='1';current_Line--;break;
+                case '2':mate[current_line][current_column]='2',mate[current_line-1][current_column]='1';current_Line--;moveNUMBER++;break;
                 case '3':
                     switch(mate[current_line-2][current_column]){
-                        case '2':mate[current_line][current_column]='2',mate[current_line-1][current_column]='1',mate[current_line-2][current_column]='3';current_Line--;break;
+                        case '2':mate[current_line][current_column]='2',mate[current_line-1][current_column]='1',mate[current_line-2][current_column]='3';current_Line--;moveNUMBER++;break;
                         case '0'||'5'||'6':move(getch(),current_line,current_column,numberOfMate);break;
-                        case '4':flag--;mate[current_line-1][current_column]='1',mate[current_line-2][current_column]='6',mate[current_line][current_column]='2';current_Line--;break;
+                        case '4':flag--;mate[current_line-1][current_column]='1',mate[current_line-2][current_column]='6',mate[current_line][current_column]='2';current_Line--;moveNUMBER++;break;
                     }break;
             }break;
         case 'r':
@@ -209,11 +222,33 @@ void gametime(int current_line,int current_column,int numberOfMate){
         system("cls");
     }
 }
+void printMoveNumber(){
+    file_move_number=fopen("moveNUMBER.txt","a");
+    if(file_move_number==NULL){
+        printf("Fail to print the move number");
+    }else{
+        fprintf(file_move_number,"move number:%d\n",moveNUMBER);
+    }
+    fclose(file_move_number);
+    printf("If you want to visit the historical game move numbers,please push'h'\n");
+}
+void getHistorical_moveNumber(char whether){
+    if(whether=='h'){
+        file_open_history=fopen("moveNUMBER.txt","r");
+        char c[200];
+        while(fgets(c,sizeof(c),file_open_history)){
+            printf("%s",c);
+        }
+        fclose(file_open_history);
+    }
+    Sleep(3000);
+}
 int main(){
     printMateIntoTxt();
     getmate_1(),gametime(2,1,1);
     getmate_2(),gametime(3,1,2);
     getmate_3(),gametime(1,1,3);
-    MessageBox(0,Text("Congratulations!"),Text("Gameover"),NULL);
+    printMoveNumber(),getHistorical_moveNumber(getch());
+    MessageBox(0,TEXT("Congratulations!"),TEXT("Gameover"),NULL);
     return 0;
 }
